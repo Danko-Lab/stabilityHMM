@@ -45,7 +45,9 @@ collectSequences <- function(twobit.filename, bed, seq.length = 1500) {
 #' @param sequence.lst list of sequences, as returned by collectSequences()
 #' @export
 prepareData <- function(sequence.lst) {
-  lapply(sequence.lst, function(seq) c(seq + 1, 1))
+  res = lapply(sequence.lst, function(seq) c(seq + 1, 1))
+  class(res) <- c("shmmData", "list")
+  res
 }
 
 #' Characterize HMM path probabilities across a collection of sequences
@@ -60,6 +62,10 @@ prepareData <- function(sequence.lst) {
 #'
 #' @export
 modelPathSummary <- function(data, hmm = createStabilityHMM()) {
+  if (!all(class(data) == c("shmmData", "list"))) {
+    stop("Unrecognized data class, please use the 'prepareData' and 'collectSequences' functions to create the input dataset.")
+  }
+  
   # estimate model parameters
   em.res = rqhmm::em.qhmm(hmm, data)
 
