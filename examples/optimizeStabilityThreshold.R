@@ -37,6 +37,9 @@ getScores <- function(bed, length) {
 expStab    <- c(rep(0, NROW(stable)), rep(1, NROW(unstable)))
 
 length <- 500 #lengths[which.max(AUCSScores)]## BEST.
+smax <- 0.0005
+umin <- 0.05
+
 SScores <- getScores(stable, length)
 UScores <- getScores(unstable, length)
 
@@ -48,7 +51,7 @@ pdf("chooseThreshold.pdf")
 # Plot histograms (Fig. 2B).
 boxplot(SScores, UScores, names=c("Stable", "Unstable"))
 vioplot(SScores, UScores, names=c("Stable", "Unstable"))
-vioplot(log(SScores+0.01), log(UScores+0.01), names=c("Stable", "Unstable"))
+vioplot(log(SScores+0.01), log(UScores+0.01), names=c("Stable", "Unstable"), ylab="log(Unstable Score)")
 
 histbreaks <- seq(0,1,0.05)
 hist(SScores, breaks=histbreaks, main="Stable")
@@ -57,7 +60,8 @@ hist(UScores, breaks=histbreaks, main="Unstable")
 plot(ecdf(SScores), col="dark blue", xlim=c(0,1), ylim=c(0,1), xlab="Unstable score")
 par(new=TRUE)
 plot(ecdf(UScores), col="red", xlim=c(0,1), ylim=c(0,1), xlab="")
-abline(v=0.01)
+abline(v=0.05)
+abline(v=0.0005)
 
 # ROC Plot
 StabScores <- c(SScores, UScores)
@@ -68,18 +72,24 @@ roc.auc(roc)
 roc.plot(roc)
 
 ## Fraction Correct ...
-th <- seq(0.0,0.05,0.0005)
+th <- c(seq(0.0,0.05,0.0005), 0.075, 0.1)
 co <- sapply(th, function(x) {(sum(SScores<x, na.rm=TRUE)+sum(UScores>x, na.rm=TRUE))/(NROW(SScores)+NROW(UScores))})
 plot(th, co, type="b")
 
-sp <- sapply(th, function(x) {(sum(SScores<x, na.rm=TRUE))/(NROW(SScores))})
-sf <- sapply(th, function(x) {(sum(SScores<x, na.rm=TRUE))/(sum(UScores<x, na.rm=TRUE)+sum(SScores<x, na.rm=TRUE))})
+ssen <- sapply(th, function(x) {(sum(SScores<x, na.rm=TRUE))/(NROW(SScores))})
+sppv <- sapply(th, function(x) {(sum(SScores<x, na.rm=TRUE))/(sum(UScores<x, na.rm=TRUE)+sum(SScores<x, na.rm=TRUE))})
 
-up <- sapply(th, function(x) {(sum(UScores>x, na.rm=TRUE))/(NROW(UScores))})
-uf <- sapply(th, function(x) {(sum(UScores>x, na.rm=TRUE))/(sum(SScores>x, na.rm=TRUE)+sum(UScores>x, na.rm=TRUE))})
+usen <- sapply(th, function(x) {(sum(UScores>x, na.rm=TRUE))/(NROW(UScores))})
+uppv <- sapply(th, function(x) {(sum(UScores>x, na.rm=TRUE))/(sum(SScores>x, na.rm=TRUE)+sum(UScores>x, na.rm=TRUE))})
 
-plot(sp, sf, xlab="Sensitivity (Stable TU)", ylab="PPV", type="b", col="dark blue")
-plot(up, uf, xlab="Sensitivity (Unstable TU)", ylab="PPV", type="b", col="red")
+plot(ssen, sppv, xlab="Sensitivity (Stable TU)", ylab="PPV", type="b", col="dark blue")
+plot(usen, uppv, xlab="Sensitivity (Unstable TU)", ylab="PPV", type="b", col="red")
+
+data.frame(th, ssen, sppv, usen, uppv, co)
+
+## Accuracy dual threshold...
+(sum(SScores < smax)+sum(UScores > umin))/(sum(SScores < smax)+sum(UScores > umin)+sum(SScores > umin)+sum(UScores < smax))
+(sum(SScores > smax & SScores < umin)+sum(UScores > umin & UScores < smax))/(NROW(SScores)+NROW(UScores)) ## Fraction unclassified...
 
 dev.off()
 
