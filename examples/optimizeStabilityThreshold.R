@@ -36,7 +36,7 @@ getScores <- function(bed, length) {
 ## Second, given a fixed sequence length, chooses a cutoff threshold that optimizes classification accuracy.
 expStab    <- c(rep(0, NROW(stable)), rep(1, NROW(unstable)))
 
-length <- 500 #lengths[which.max(AUCSScores)]## BEST.
+length <- 400 #lengths[which.max(AUCSScores)]## BEST.
 smax <- 0.0005
 umin <- 0.05
 
@@ -51,7 +51,7 @@ pdf("chooseThreshold.pdf")
 # Plot histograms (Fig. 2B).
 boxplot(SScores, UScores, names=c("Stable", "Unstable"))
 vioplot(SScores, UScores, names=c("Stable", "Unstable"))
-vioplot(log(SScores+0.01), log(UScores+0.01), names=c("Stable", "Unstable"), ylab="log(Unstable Score)")
+vioplot(log(SScores+0.01), log(UScores+0.01), names=c("Stable", "Unstable"))
 
 histbreaks <- seq(0,1,0.05)
 hist(SScores, breaks=histbreaks, main="Stable")

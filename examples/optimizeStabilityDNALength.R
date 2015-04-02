@@ -51,6 +51,6 @@ for(length in lengths) {
 # Plots AUC v. legnth
 data.frame(lengths, AUCSScores)
 
-plot("AUCvLength.pdf")
+pdf("AUCvLength.pdf")
  plot(lengths, AUCSScores, type="b")
 dev.off()
