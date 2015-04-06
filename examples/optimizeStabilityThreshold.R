@@ -16,7 +16,7 @@ hg19 <- "/local/storage/data/hg19/hg19.2bit" ## hg19
 ## Read in sequences of known stability.
 path<-"/local/storage/projects/validateStabilityHMM/data/"
 setwd("/local/storage/projects/validateStabilityHMM")
-call <- paste("zcat refGene.hg19.bed.gz | awk 'BEGIN{OFS=","\t","} {print $1,$6==","+","?$2:$3-1,$6==","+","?$2+1:$3,$4,$5,$6}' | sort-bed - | bedtools closest -s -d -b stdin -a ", sep='"')
+call <- paste("zcat refGene.hg19.bed.gz | awk 'BEGIN{OFS=","\t","} {print $1,$6==","+","?$2:$3-1,$6==","+","?$2+1:$3,$4,$5,$6}' | sort-bed - | bedtools closest -s -d -t ","first"," -b stdin -a ", sep='"')
 cell<-"k562"#"gm12878"
 stable   <- rbind( read.table(pipe(paste(call, path,"tss_SS_",cell,"_plus.bed",sep=""))),
 		read.table(pipe(paste(call, path,"tss_SS_",cell,"_minus.bed",sep=""))),
