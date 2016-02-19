@@ -7,13 +7,13 @@ Installation:
 ============
 1) Install RGHMM package from the GitHub as the following scripts.
 
-> git clone https://github.com/andrelmartins/QHMM.git
+> git clone https://github.com/andrelmartins/QHMM.git\n
 > cd QHMM
 > R CMD INSTALL rqhmm
 
 2) Install twoBit package from the GitHub as the following scripts
 
-> git  clone https://github.com/andrelmartins/TwoBit.git
+> git  clone https://github.com/andrelmartins/TwoBit.git\n
 > cd TwoBit
 > make
 
