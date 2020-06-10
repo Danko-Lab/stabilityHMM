@@ -15,7 +15,7 @@ Installation:
 
 2) Install twoBit package from the GitHub as the following scripts
 
-> git  clone https://github.com/andrelmartins/TwoBit.git\n
+> git  clone https://github.com/andrelmartins/TwoBit.git
 
 > cd TwoBit
 
